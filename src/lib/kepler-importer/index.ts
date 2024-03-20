@@ -1,9 +1,7 @@
 import {PluginInterface} from '../../interfaces';
 import {ConfigParams, PluginParams} from '../../types';
 
-export const MyCustomPlugin = (
-  globalConfig: ConfigParams
-): PluginInterface => {
+export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
   const metadata = {
     kind: 'execute',
   };
