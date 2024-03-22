@@ -10,6 +10,17 @@
 - [Teads TDP Curve](./src/lib/teads-curve/README.md)
 - [Watt Time](./src/lib/watt-time/README.md)
 
+## Test Kepler in development
+
+```bash
+npm run build
+
+# This step will override the @grnsft/if-unofficial-plugins package with this repository content
+npm link
+
+ie --manifest kepler-manifest.yml
+```
+
 ## Contributing
 
 See contributing rules [here](./CONTRIBUTING.md).

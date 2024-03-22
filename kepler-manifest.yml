@@ -1,0 +1,17 @@
+name: kepler-test
+description:
+tags:
+aggregation:
+  metrics:
+    - 'carbon'
+  type: 'both'
+initialize:
+  plugins:
+    'kepler-importer':
+      path: '@grnsft/if-unofficial-plugins'
+      method: KeplerPlugin
+tree:
+  children:
+    child-1:
+      pipeline:
+        - kepler-importer
