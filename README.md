@@ -18,6 +18,8 @@ npm run build
 # This step will override the @grnsft/if-unofficial-plugins package with this repository content
 npm link
 
+kubectl port-forward -n monitoring svc/prometheus-operated 9090
+
 ie --manifest kepler-manifest.yml
 ```
 

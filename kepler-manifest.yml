@@ -1,9 +1,9 @@
 name: kepler-test
 description:
 tags:
-aggregation:
-  metrics:
-    - 'carbon'
+  # aggregation:
+  #   metrics:
+  #     - 'carbon'
   type: 'both'
 initialize:
   plugins:
@@ -15,3 +15,11 @@ tree:
     child-1:
       pipeline:
         - kepler-importer
+      config:
+        kepler-importer:
+          kepler-observation-window: 3600
+          prometheus-endpoint: http://localhost:9090
+          kepler-namespace: falco
+      inputs:
+        - timestamp: '2024-03-21T00:00:00Z'
+          duration: 10800
