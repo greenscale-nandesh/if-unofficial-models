@@ -6,6 +6,8 @@ tags:
   #     - 'carbon'
   type: 'both'
 initialize:
+  outputs:
+    - yaml
   plugins:
     'kepler-importer':
       path: '@grnsft/if-unofficial-plugins'

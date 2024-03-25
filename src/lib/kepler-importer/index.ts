@@ -38,7 +38,7 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
       }));
       outputs.push(energy);
     }
-    return outputs;
+    return outputs.flat(1);
   };
 
   return {
