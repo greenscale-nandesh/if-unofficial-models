@@ -21,7 +21,8 @@ tree:
         kepler-importer:
           kepler-observation-window: 3600
           prometheus-endpoint: http://localhost:9090
-          kepler-namespace: falco
+          container-namespace: falco
+          container-name: falco
       inputs:
         - timestamp: '2024-03-21T00:00:00Z'
           duration: 10800

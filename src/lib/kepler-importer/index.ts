@@ -22,7 +22,8 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
     globalConfig;
     const endpoint = config['prometheus-endpoint'];
     const step = config['kepler-observation-window'];
-    const namespace = config['kepler-namespace'];
+    const namespace = config['container-namespace'];
+    const container = config['container-name'];
 
     const outputs = [];
     for (const input of inputs) {
@@ -30,7 +31,14 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
       const duration = input['duration'];
       const end = new Date(start.getTime() + duration * 1000 - 1);
 
-      const serie = await prometheus(endpoint, start, end, step, namespace);
+      const serie = await prometheus(
+        endpoint,
+        start,
+        end,
+        step,
+        namespace,
+        container
+      );
       const energy = serie.values.map((sample: SampleValue) => ({
         timestamp: sample.time,
         energy: sample.value,
@@ -52,10 +60,11 @@ async function prometheus(
   start: Date,
   end: Date,
   step: number,
-  namespace: string
+  namespace: string,
+  container: string
 ) {
   const prom = new PrometheusDriver({endpoint: endpoint, baseURL: '/api/v1'});
-  const promql = `sum(increase(kepler_container_joules_total{container_namespace="${namespace}"}[${step}s]))`;
+  const promql = `sum(increase(kepler_container_joules_total{container_namespace="${namespace}", container_name="${container}"}[${step}s]))`;
   const query = prom.rangeQuery(promql, start, end, step);
   const res = await query;
 
