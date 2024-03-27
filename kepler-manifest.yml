@@ -1,11 +1,13 @@
 name: kepler-test
 description:
 tags:
-aggregation:
-  metrics:
-    - 'carbon'
+  # aggregation:
+  #   metrics:
+  #     - 'carbon'
   type: 'both'
 initialize:
+  outputs:
+    - yaml
   plugins:
     'kepler-importer':
       path: '@grnsft/if-unofficial-plugins'
@@ -15,3 +17,12 @@ tree:
     child-1:
       pipeline:
         - kepler-importer
+      config:
+        kepler-importer:
+          kepler-observation-window: 3600
+          prometheus-endpoint: http://localhost:9090
+          container-namespace: falco
+          container-name: falco
+      inputs:
+        - timestamp: '2024-03-21T00:00:00Z'
+          duration: 10800
