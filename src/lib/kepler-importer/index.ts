@@ -40,6 +40,7 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
         container
       );
       const energy = serie.values.map((sample: SampleValue) => ({
+        ...input,
         timestamp: sample.time,
         energy: sample.value,
         duration: step,
