@@ -1,0 +1,44 @@
+name: kepler-green-reviews-test
+description:
+tags:
+initialize:
+  outputs:
+    - yaml
+  plugins:
+    'kepler-importer':
+      path: '@grnsft/if-unofficial-plugins'
+      method: KeplerPlugin
+    'sci-m':
+      path: '@grnsft/if-plugins'
+      method: SciM
+    'sci-o':
+      path: '@grnsft/if-plugins'
+      method: SciO
+    'sci':
+      path: '@grnsft/if-plugins'
+      method: Sci
+tree:
+  children:
+    child-1:
+      pipeline:
+        - kepler-importer
+        - sci-o
+        - sci-m
+        - sci
+      config:
+        sci-m:
+        sci-o:
+        kepler-importer:
+          kepler-observation-window: 3600
+          prometheus-endpoint: http://localhost:9090
+          container-namespace: falco
+          container-name: falco
+      inputs:
+        - timestamp: '2024-03-28T00:00:00Z'
+          duration: 3600
+          device/emissions-embodied: 550000 # gCO2eq https://github.com/cncf-tags/green-reviews-tooling/blob/main/docs/measurement/sci.md
+          device/expected-lifespan: 126144000 # 4 years in seconds
+          grid/carbon-intensity: 56 # France average carbon intensity
+          resources-reserved: 1
+          resources-total: 1
+          
