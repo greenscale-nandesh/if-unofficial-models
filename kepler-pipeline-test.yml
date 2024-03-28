@@ -1,4 +1,4 @@
-name: kepler-green-reviews-test
+name: kepler-pipeline-test
 description:
 tags:
 initialize:
@@ -38,7 +38,7 @@ tree:
           duration: 3600
           device/emissions-embodied: 550000 # gCO2eq https://github.com/cncf-tags/green-reviews-tooling/blob/main/docs/measurement/sci.md
           device/expected-lifespan: 126144000 # 4 years in seconds
-          grid/carbon-intensity: 56 # France average carbon intensity
+          grid/carbon-intensity: 56 # France average carbon intensity 2023 gCO2eq/kWh
           resources-reserved: 1
           resources-total: 1
           
