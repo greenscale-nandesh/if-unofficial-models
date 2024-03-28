@@ -3,6 +3,7 @@ import {PluginInterface} from '../../interfaces';
 import {ConfigParams, PluginParams} from '../../types';
 import {PrometheusDriver, SampleValue} from 'prometheus-query';
 
+const J_TO_KWH = 3600000;
 export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
   const metadata = {
     kind: 'execute',
@@ -42,7 +43,7 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
       const energy = serie.values.map((sample: SampleValue) => ({
         ...input,
         timestamp: sample.time,
-        energy: sample.value,
+        energy: sample.value / J_TO_KWH,
         duration: step,
       }));
       outputs.push(energy);
