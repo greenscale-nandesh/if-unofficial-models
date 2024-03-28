@@ -17,6 +17,8 @@ initialize:
     'sci':
       path: '@grnsft/if-plugins'
       method: Sci
+      global-config:
+        functional-unit-time: '1 hour'
 tree:
   children:
     child-1:
@@ -41,4 +43,3 @@ tree:
           grid/carbon-intensity: 56 # France average carbon intensity 2023 gCO2eq/kWh
           resources-reserved: 1
           resources-total: 1
-          
