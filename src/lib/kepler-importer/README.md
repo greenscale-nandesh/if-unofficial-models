@@ -55,8 +55,8 @@ tree:
           container-namespace: falco
           container-name: falco
       inputs:
-        - timestamp: '2024-03-28T00:00:00Z'
-          duration: 3600
+        - timestamp: '2024-04-01T00:00:00Z'
+          duration: 10800
 ```
 
 ## Outputs
