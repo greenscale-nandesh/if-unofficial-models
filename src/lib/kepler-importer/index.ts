@@ -2,6 +2,8 @@ import {assert} from 'console';
 import {PluginInterface} from '../../interfaces';
 import {ConfigParams, PluginParams} from '../../types';
 import {PrometheusDriver, SampleValue} from 'prometheus-query';
+import {z} from 'zod';
+import {validate} from '../../util/validations';
 
 const J_TO_KWH = 3600000;
 export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
@@ -20,11 +22,9 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
       throw new Error('Config for Kepler plugin must be provided.');
     }
 
+    const keplerConfig = getKeplerConfig(config);
+
     globalConfig;
-    const endpoint = config['prometheus-endpoint'];
-    const step = config['kepler-observation-window'];
-    const namespace = config['container-namespace'];
-    const container = config['container-name'];
 
     const outputs = [];
     for (const input of inputs) {
@@ -32,19 +32,12 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
       const duration = input['duration'];
       const end = new Date(start.getTime() + duration * 1000 - 1);
 
-      const serie = await prometheus(
-        endpoint,
-        start,
-        end,
-        step,
-        namespace,
-        container
-      );
+      const serie = await prometheus(start, end, keplerConfig);
       const energy = serie.values.map((sample: SampleValue) => ({
         ...input,
         timestamp: sample.time,
         energy: sample.value / J_TO_KWH,
-        duration: step,
+        duration: keplerConfig.step,
       }));
       outputs.push(energy);
     }
@@ -57,20 +50,51 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
   };
 };
 
-async function prometheus(
-  endpoint: string,
-  start: Date,
-  end: Date,
-  step: number,
-  namespace: string,
-  container: string
-) {
-  const prom = new PrometheusDriver({endpoint: endpoint, baseURL: '/api/v1'});
-  const promql = `sum(increase(kepler_container_joules_total{container_namespace="${namespace}", container_name="${container}"}[${step}s]))`;
-  const query = prom.rangeQuery(promql, start, end, step);
+async function prometheus(start: Date, end: Date, config: KeplerConfig) {
+  const prom = new PrometheusDriver({
+    endpoint: config.endpoint,
+    baseURL: '/api/v1',
+  });
+  const promql = `sum(increase(kepler_container_joules_total{container_namespace="${config.namespace}", container_name="${config.container}"}[${config.step}s]))`;
+  const query = prom.rangeQuery(promql, start, end, config.step);
   const res = await query;
-
   assert(res.result.length === 1);
   const serie = res.result[0];
   return serie;
+}
+
+type KeplerConfig = {
+  endpoint: string;
+  step: number;
+  namespace: string;
+  container: string;
+};
+export function getKeplerConfig(config: ConfigParams): KeplerConfig {
+  // TODO: mybe check that all parameters are well-defined
+  const regexp = new RegExp('^[a-z0-9]([-a-z0-9]*[a-z0-9])?$');
+  const schema = z.object({
+    'prometheus-endpoint': z.string().refine(s => isValidHttpUrl(s)),
+    'kepler-observation-window': z.number().int().positive(),
+    'container-namespace': z.string().regex(regexp),
+    'container-name': z.string().regex(regexp),
+  });
+  const validatedConfig = validate<z.infer<typeof schema>>(schema, config);
+  return {
+    endpoint: validatedConfig['prometheus-endpoint'],
+    step: validatedConfig['kepler-observation-window'],
+    namespace: validatedConfig['container-namespace'],
+    container: validatedConfig['container-name'],
+  };
+}
+
+function isValidHttpUrl(s: string) {
+  let url;
+
+  try {
+    url = new URL(s);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === 'http:' || url.protocol === 'https:';
 }
