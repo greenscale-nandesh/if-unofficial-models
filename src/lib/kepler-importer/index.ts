@@ -3,7 +3,7 @@ import {PluginInterface} from '../../interfaces';
 import {ConfigParams, PluginParams} from '../../types';
 import {PrometheusDriver, SampleValue} from 'prometheus-query';
 import {z} from 'zod';
-import {validate} from '../../util/validations';
+import {validate, allDefined} from '../../util/validations';
 
 const J_TO_KWH = 3600000;
 export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
@@ -22,22 +22,23 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
       throw new Error('Config for Kepler plugin must be provided.');
     }
 
-    const keplerConfig = getKeplerConfig(config);
+    const validatedConfig = getKeplerConfig(config);
+    const validatedInputs = inputs.map(getKeplerInput);
 
     globalConfig;
 
     const outputs = [];
-    for (const input of inputs) {
-      const start = new Date(input['timestamp']);
-      const duration = input['duration'];
-      const end = new Date(start.getTime() + duration * 1000 - 1);
+    for (const input of validatedInputs) {
+      const end = new Date(
+        input.timestamp.getTime() + input.duration * 1000 - 1
+      );
 
-      const serie = await prometheus(start, end, keplerConfig);
+      const serie = await prometheus(input.timestamp, end, validatedConfig);
       const energy = serie.values.map((sample: SampleValue) => ({
         ...input,
         timestamp: sample.time,
         energy: sample.value / J_TO_KWH,
-        duration: keplerConfig.step,
+        duration: validatedConfig.step,
       }));
       outputs.push(energy);
     }
@@ -69,8 +70,8 @@ type KeplerConfig = {
   namespace: string;
   container: string;
 };
+
 export function getKeplerConfig(config: ConfigParams): KeplerConfig {
-  // TODO: mybe check that all parameters are well-defined
   const regexp = new RegExp('^[a-z0-9]([-a-z0-9]*[a-z0-9])?$');
   const schema = z.object({
     'prometheus-endpoint': z.string().refine(s => isValidHttpUrl(s)),
@@ -98,3 +99,20 @@ function isValidHttpUrl(s: string) {
 
   return url.protocol === 'http:' || url.protocol === 'https:';
 }
+
+export function getKeplerInput(input: PluginParams): KeplerInput {
+  const schema = z
+    .object({
+      timestamp: z.string().datetime(),
+      duration: z.number().int().positive(),
+    })
+    .refine(allDefined);
+  const valid = validate<z.infer<typeof schema>>(schema, input);
+  return {...input, ...valid, timestamp: new Date(input['timestamp'])};
+}
+
+type KeplerInput = {
+  duration: number;
+  timestamp: Date;
+  [key: string]: any;
+};
