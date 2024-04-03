@@ -1,6 +1,6 @@
 # Kepler-importer
 
-The Kepler-importer plugin addresses the need for accurately measuring the energy consumption of bare metal Kubernetes clusters through the CNCF's Kepler project, which utilizes RAPL for energy monitoring. It facilitates the integration of Prometheus-collected Kepler metrics into the Impact Framework, enabling the computation of the SCI score for Kubernetes-deployed workloads. This process involves fetching metrics via a Prometheus server, normalizing the data through the Kepler importer plugin, and using official IF SCI models to calculate the SCI score.
+The Kepler-importer plugin addresses the need for accurately measuring the energy consumption of Kubernetes clusters through the CNCF's [Kepler](https://github.com/sustainable-computing-io/kepler) project, which utilizes RAPL for energy monitoring on bare metal clusters. It facilitates the integration of Prometheus-collected Kepler metrics into the Impact Framework, enabling the computation of the SCI score for Kubernetes-deployed workloads. This process involves fetching metrics via a Prometheus server, normalizing the data through the Kepler importer plugin, and using official IF SCI models to calculate the SCI score.
 
 ## Prerequisites
 
