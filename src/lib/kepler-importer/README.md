@@ -10,7 +10,7 @@ Ensure you have Kepler [installed](https://sustainable-computing.io/installation
 
 ### 2. Configure Prometheus for Kepler Observations
 
-The Kepler Importer uses Prometheus metrics to assess the energy and carbon footprint of specified resources. Configure Prometheus to collect and expose the necessary metrics.
+The Kepler Importer plugin uses Prometheus metrics to assess the energy and carbon footprint of specified resources. Kepler will install a service monitor to configure Prometheus to collect and expose the necessary metrics. If these metrics are not present check the Kepler [troubleshooting docs](https://sustainable-computing.io/usage/trouble_shooting/).
 
 #### Add credentials to `.env`
 
