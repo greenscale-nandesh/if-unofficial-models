@@ -6,7 +6,7 @@ The Kepler-importer plugin addresses the need for accurately measuring the energ
 
 ### 1. Set up Kepler and a Prometheus Monitoring System
 
-Ensure you have a Kepler configured and Prometheus monitoring system running and accessible. This system should collect metrics relevant to the Kepler's operation, such as container metrics.
+Ensure you have Kepler [installed](https://sustainable-computing.io/installation/kepler-helm/) and your Prometheus monitoring system is running and accessible. This system should collect metrics relevant to the Kepler's operation, such as container metrics.
 
 ### 2. Configure Prometheus for Kepler Observations
 
