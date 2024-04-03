@@ -25,7 +25,7 @@ PROMETHEUS_PASSWORD: <your-pormetheus-password
 
 Prepare the necessary parameters, such as the observation window and the Prometheus endpoint, along with details about the resources you want to monitor (e.g., container namespaces and names).
 
-## Congifuration
+## Configuration
 
 - `kepler-observation-window`: The time interval between measurements in seconds
 - `prometheus-endpoint`: Endpoint for the prometheus server
