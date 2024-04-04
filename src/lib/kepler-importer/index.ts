@@ -4,12 +4,14 @@ import {ConfigParams, PluginParams} from '../../types';
 import {PrometheusDriver, SampleValue} from 'prometheus-query';
 import {z} from 'zod';
 import {validate, allDefined} from '../../util/validations';
+import * as dotenv from 'dotenv';
 
 const J_TO_KWH = 3600000;
 export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
   const metadata = {
     kind: 'execute',
   };
+  dotenv.config();
 
   /**
    * Execute's strategy description here.
@@ -52,9 +54,18 @@ export const KeplerPlugin = (globalConfig: ConfigParams): PluginInterface => {
 };
 
 async function prometheus(start: Date, end: Date, config: KeplerConfig) {
+  const username = process.env.PROMETHEUS_USERNAME;
+  const password = process.env.PROMETHEUS_PASSWORD;
   const prom = new PrometheusDriver({
     endpoint: config.endpoint,
     baseURL: '/api/v1',
+    ...(username &&
+      password && {
+        auth: {
+          username: username,
+          password: password,
+        },
+      }),
   });
   const promql = `sum(increase(kepler_container_joules_total{container_namespace="${config.namespace}", container_name="${config.container}"}[${config.step}s]))`;
   const query = prom.rangeQuery(promql, start, end, config.step);

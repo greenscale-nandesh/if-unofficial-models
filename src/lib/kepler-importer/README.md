@@ -18,7 +18,7 @@ Create a `.env` file in the IF project root directory. This is where you can sto
 
 ```txt
 PROMETHEUS_USERNAME: <your-prometheus-username>
-PROMETHEUS_PASSWORD: <your-pormetheus-password
+PROMETHEUS_PASSWORD: <your-pormetheus-password>
 ```
 
 ### 3. Define Observation and Resource Parameters
